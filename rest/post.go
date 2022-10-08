@@ -8,14 +8,13 @@ import (
 	"github.com/DonggyuLim/grc20/token"
 	u "github.com/DonggyuLim/grc20/utils"
 	"github.com/gin-gonic/gin"
-	"github.com/shopspring/decimal"
 )
 
 type AccountResponse struct {
-	TokenName string          `json:"tokenName"`
-	Account   string          `json:"account"`
-	Balance   decimal.Decimal `json:"balance"`
-	Allowance decimal.Decimal `json:"Allowance"`
+	TokenName string `json:"tokenName"`
+	Account   string `json:"account"`
+	Balance   uint64 `json:"balance"`
+	Allowance uint64 `json:"Allowance"`
 }
 
 type deployRequest struct {
@@ -30,7 +29,6 @@ type deployRequest struct {
 func Deploy(c *gin.Context) {
 	r := deployRequest{}
 	err := c.ShouldBindJSON(&r)
-	fmt.Println("r==========", r)
 	if err != nil {
 		c.String(400, err.Error())
 	}
@@ -43,7 +41,7 @@ func Deploy(c *gin.Context) {
 		t := token.NewToken(r.TokenName, r.Symbol, r.Decimal)
 
 		// t.Mint(r.Account, r.TotalSupply)
-		t.Mint(r.Account, u.UintToDecimal(r.TotalSupply))
+		t.Mint(r.Account, r.TotalSupply)
 
 		Interface.SaveToken(r.TokenName, t)
 		c.JSON(200, gin.H{
@@ -77,7 +75,7 @@ func Mint(c *gin.Context) {
 		return
 	}
 
-	t.Mint(r.Account, u.UintToDecimal(r.Amount))
+	t.Mint(r.Account, r.Amount)
 	u.SaveToken(r.TokenName, t)
 	c.JSON(200, gin.H{
 		"message":     "success",
@@ -110,7 +108,7 @@ func Transfer(c *gin.Context) {
 		c.String(400, err.Error())
 		return
 	}
-	err = t.Transfer(r.From, r.To, u.UintToDecimal(r.Amount))
+	err = t.Transfer(r.From, r.To, r.Amount)
 	if err != nil {
 		c.String(400, err.Error())
 		return
@@ -151,7 +149,7 @@ func Approve(c *gin.Context) {
 		c.String(400, err.Error())
 		return
 	}
-	err = t.Approve(r.Owner, r.Spender, u.UintToDecimal(r.Amount))
+	err = t.Approve(r.Owner, r.Spender, r.Amount)
 	if err != nil {
 		c.String(400, err.Error())
 		return
@@ -184,7 +182,7 @@ func TransferFrom(c *gin.Context) {
 		c.String(400, err.Error())
 		return
 	}
-	err = t.TransferFrom(r.Onwer, r.Spender, r.To, u.UintToDecimal(r.Amount))
+	err = t.TransferFrom(r.Onwer, r.Spender, r.To, r.Amount)
 	if err != nil {
 		c.String(400, err.Error())
 		return
@@ -202,9 +200,9 @@ func TransferFrom(c *gin.Context) {
 }
 
 type burnRequest struct {
-	TokenName string          `json:"tokenName"`
-	Account   string          `json:"account"`
-	Amount    decimal.Decimal `json:"amount"`
+	TokenName string `json:"tokenName"`
+	Account   string `json:"account"`
+	Amount    uint64 `json:"amount"`
 }
 
 func Burn(c *gin.Context) {

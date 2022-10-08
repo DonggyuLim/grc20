@@ -117,7 +117,7 @@ Content-Type: "application/json"
 //TransferFrom
 ###
 
-POST http://localhost:8000/transferFrom HTTP/1.1
+POST http://localhost:8000/transferfrom HTTP/1.1
 Content-Type: "application/json"
 
 {

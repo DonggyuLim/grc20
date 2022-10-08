@@ -48,12 +48,12 @@ func (r *RPCServer) Transfer(ctx context.Context, req *rpc.TransferRequest) (*rp
 			FromBalance: 0,
 		}, err
 	}
-	t.Transfer(from, to, u.UintToDecimal(amount))
+	t.Transfer(from, to, amount)
 	u.SaveToken(tokenName, t)
 	return &rpc.TransferResponse{
 
-		ToBalance:   t.BalanceOf(to).BigInt().Uint64(),
-		FromBalance: t.BalanceOf(from).BigInt().Uint64(),
+		ToBalance:   t.BalanceOf(to),
+		FromBalance: t.BalanceOf(from),
 	}, nil
 }
 
@@ -70,12 +70,12 @@ func (r *RPCServer) Approve(ctx context.Context, req *rpc.ApproveRequest) (*rpc.
 			Allowance: 0,
 		}, err
 	}
-	t.Approve(owner, spender, u.UintToDecimal(amount))
+	t.Approve(owner, spender, amount)
 
 	u.SaveToken(tokenName, t)
 	return &rpc.ApproveResponse{
 
-		Allowance: t.Allowance(owner, spender).BigInt().Uint64(),
+		Allowance: t.Allowance(owner, spender),
 	}, nil
 }
 
@@ -95,7 +95,7 @@ func (r *RPCServer) TransferFrom(ctx context.Context, req *rpc.TransferFromReque
 			ToBalance: 0,
 		}, err
 	}
-	err = t.TransferFrom(owner, spender, to, u.UintToDecimal(amount))
+	err = t.TransferFrom(owner, spender, to, amount)
 	if err != nil {
 		return &rpc.TransferFromResponse{
 
@@ -105,7 +105,7 @@ func (r *RPCServer) TransferFrom(ctx context.Context, req *rpc.TransferFromReque
 	u.SaveToken(tokenName, t)
 	return &rpc.TransferFromResponse{
 
-		ToBalance: t.BalanceOf(to).BigInt().Uint64(),
+		ToBalance: t.BalanceOf(to),
 	}, nil
 }
 
@@ -118,9 +118,8 @@ func (r *RPCServer) GetBalance(ctx context.Context, req *rpc.GetBalanceRequest) 
 			Balance: 0,
 		}, err
 	}
-	balance := t.BalanceOf(req.GetAccount()).BigInt().Uint64()
+	balance := t.BalanceOf(req.GetAccount())
 	return &rpc.GetBalanceResponse{
-
 		Balance: balance,
 	}, nil
 }
@@ -142,7 +141,7 @@ func (r *RPCServer) GetTokenInfo(ctx context.Context, req *rpc.TokenInfoRequest)
 		TokenName:   t.GetName(),
 		Symbol:      t.GetSymbol(),
 		Decimal:     uint32(t.GetDecimal()),
-		TotalSupply: t.GetTotalSupply().BigInt().Uint64(),
+		TotalSupply: t.GetTotalSupply(),
 	}, nil
 }
 
@@ -158,6 +157,6 @@ func (r *RPCServer) GetAllowance(ctx context.Context, req *rpc.AllowanceRequest)
 	allowance := t.Allowance(req.GetOwner(), req.GetSpender())
 	return &rpc.AllowanceResponse{
 
-		Allowance: allowance.BigInt().Uint64(),
+		Allowance: allowance,
 	}, nil
 }

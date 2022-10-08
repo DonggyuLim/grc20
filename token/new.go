@@ -1,16 +1,14 @@
 package token
 
-import "github.com/shopspring/decimal"
-
 func NewToken(name, symbol string, dec uint8) *Token {
-	bm := make(map[string]decimal.Decimal)
-	am := make(map[string]decimal.Decimal)
+	bm := make(map[string]uint64)
+	am := make(map[string]uint64)
 
 	t := &Token{
 		Name:        name,
 		Symbol:      symbol,
 		Decimal:     dec,
-		TotalSupply: decimal.NewFromInt(0),
+		TotalSupply: 0,
 		Balance:     bm,
 		Allowances:  am,
 	}
