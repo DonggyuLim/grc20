@@ -117,10 +117,7 @@ func (t *Token) Mint(account string, amount uint64) {
 func (t *Token) mint(address string, amount uint64) {
 
 	t.TotalSupply = t.TotalSupply + amount
-	currentBalance := t.BalanceOf(address)
-	// newBalance := currentBalance + amount
-	newBalance := currentBalance + amount
-	t.Balance[address] = newBalance
+	t.Balance[address] = t.BalanceOf(address) + amount
 }
 
 func (t *Token) Burn(address string, amount uint64) {
