@@ -50,22 +50,13 @@ func (r *RPCServer) Transfer(ctx context.Context, req *rpc.TransferRequest) (*rp
 			FromBalance: "0",
 		}, err
 	}
-<<<<<<< HEAD
-	amount, _ := math.NewIntFromString(req.Amount)
-	t.Transfer(from, to, amount)
+	amount := math.NewUintFromString(req.Amount)
+	t.Transfer(from, to, math.Int(amount))
 	u.SaveToken(tokenName, t)
 	return &rpc.TransferResponse{
 
 		ToBalance:   t.BalanceOf(to).String(),
 		FromBalance: t.BalanceOf(from).String(),
-=======
-	t.Transfer(from, to, u.UintToDecimal(amount))
-	u.SaveToken(tokenName, t)
-	return &rpc.TransferResponse{
-
-		ToBalance:   t.BalanceOf(to).BigInt().Uint64(),
-		FromBalance: t.BalanceOf(from).BigInt().Uint64(),
->>>>>>> parent of 3f9e7f6 (modified number Deciaml.Decimal -> uint64)
 	}, nil
 }
 
@@ -74,7 +65,7 @@ func (r *RPCServer) Approve(ctx context.Context, req *rpc.ApproveRequest) (*rpc.
 	tokenName := req.GetTokenName()
 	owner := req.GetOwner()
 	spender := req.GetSpender()
-	amount, _ := math.NewIntFromString(req.Amount)
+	amount := math.NewUintFromString(req.Amount)
 
 	t, err := u.GetToken(tokenName)
 	if err != nil {
@@ -82,21 +73,12 @@ func (r *RPCServer) Approve(ctx context.Context, req *rpc.ApproveRequest) (*rpc.
 			Allowance: "0",
 		}, err
 	}
-<<<<<<< HEAD
-
-	t.Approve(owner, spender, amount)
-=======
-	t.Approve(owner, spender, u.UintToDecimal(amount))
->>>>>>> parent of 3f9e7f6 (modified number Deciaml.Decimal -> uint64)
+	t.Approve(owner, spender, math.Int(amount))
 
 	u.SaveToken(tokenName, t)
 	return &rpc.ApproveResponse{
 
-<<<<<<< HEAD
 		Allowance: t.Allowance(owner, spender).String(),
-=======
-		Allowance: t.Allowance(owner, spender).BigInt().Uint64(),
->>>>>>> parent of 3f9e7f6 (modified number Deciaml.Decimal -> uint64)
 	}, nil
 }
 
@@ -106,7 +88,7 @@ func (r *RPCServer) TransferFrom(ctx context.Context, req *rpc.TransferFromReque
 	owner := req.GetOwner()
 	spender := req.GetSpender()
 	to := req.GetTo()
-	amount, _ := math.NewIntFromString(req.GetAmount())
+	amount := math.NewUintFromString(req.GetAmount())
 
 	t, err := u.GetToken(tokenName)
 	if err != nil {
@@ -115,7 +97,7 @@ func (r *RPCServer) TransferFrom(ctx context.Context, req *rpc.TransferFromReque
 			ToBalance: "0",
 		}, err
 	}
-	err = t.TransferFrom(owner, spender, to, u.UintToDecimal(amount))
+	err = t.TransferFrom(owner, spender, to, math.Int(amount))
 	if err != nil {
 		return &rpc.TransferFromResponse{
 
@@ -125,11 +107,7 @@ func (r *RPCServer) TransferFrom(ctx context.Context, req *rpc.TransferFromReque
 	u.SaveToken(tokenName, t)
 	return &rpc.TransferFromResponse{
 
-<<<<<<< HEAD
 		ToBalance: t.BalanceOf(to).String(),
-=======
-		ToBalance: t.BalanceOf(to).BigInt().Uint64(),
->>>>>>> parent of 3f9e7f6 (modified number Deciaml.Decimal -> uint64)
 	}, nil
 }
 
@@ -142,14 +120,10 @@ func (r *RPCServer) GetBalance(ctx context.Context, req *rpc.GetBalanceRequest) 
 			Balance: "0",
 		}, err
 	}
-	balance := t.BalanceOf(req.GetAccount()).BigInt().Uint64()
+	balance := t.BalanceOf(req.Account)
 	return &rpc.GetBalanceResponse{
-<<<<<<< HEAD
-		Balance: balance.String(),
-=======
 
-		Balance: balance,
->>>>>>> parent of 3f9e7f6 (modified number Deciaml.Decimal -> uint64)
+		Balance: balance.String(),
 	}, nil
 }
 
@@ -168,13 +142,8 @@ func (r *RPCServer) GetTokenInfo(ctx context.Context, req *rpc.TokenInfoRequest)
 	return &rpc.TokenInfoResponse{
 		TokenName:   t.GetName(),
 		Symbol:      t.GetSymbol(),
-<<<<<<< HEAD
 		Decimal:     strconv.Itoa(int(t.GetDecimal())),
 		TotalSupply: t.GetTotalSupply().String(),
-=======
-		Decimal:     uint32(t.GetDecimal()),
-		TotalSupply: t.GetTotalSupply().BigInt().Uint64(),
->>>>>>> parent of 3f9e7f6 (modified number Deciaml.Decimal -> uint64)
 	}, nil
 }
 
@@ -189,11 +158,7 @@ func (r *RPCServer) GetAllowance(ctx context.Context, req *rpc.AllowanceRequest)
 	}
 	allowance := t.Allowance(req.GetOwner(), req.GetSpender())
 	return &rpc.AllowanceResponse{
-<<<<<<< HEAD
-		Allowance: allowance.String(),
-=======
 
-		Allowance: allowance.BigInt().Uint64(),
->>>>>>> parent of 3f9e7f6 (modified number Deciaml.Decimal -> uint64)
+		Allowance: allowance.String(),
 	}, nil
 }
