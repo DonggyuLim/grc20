@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/gob"
 	"errors"
+	"log"
 
 	"github.com/DonggyuLim/grc20/db"
 )
@@ -12,9 +13,9 @@ import (
 func ByteToToken(data []byte) *Token {
 	var token *Token
 	decoder := gob.NewDecoder(bytes.NewBuffer(data))
-	err := decoder.Decode(&token)
+	err := decoder.Decode(token)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 	return token
 }

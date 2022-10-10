@@ -3,31 +3,37 @@ package Interface
 import (
 	"bytes"
 	"encoding/gob"
+	"fmt"
+	"log"
 
+	"cosmossdk.io/math"
 	"github.com/DonggyuLim/grc20/db"
 )
 
 type GRC20 interface {
 	GetName() string
 	GetSymbol() string
-	GetTotalSupply() uint64
-	BalanceOf(account string) uint64
+	GetTotalSupply() math.Int
+	BalanceOf(account string) math.Int
 	GetDecimal() uint8
-	Transfer(from, to string, amount uint64) error
-	TransferFrom(from, to, sepnder string, amount uint64) error
-	Allowance(owner, spender string) uint64
-	Approve(owner, spender string, amount uint64) error
-	Mint(account string, amount uint64)
+	Transfer(from, to string, amount math.Int) error
+	TransferFrom(from, to, sepnder string, amount math.Int) error
+	Allowance(owner, spender string) math.Int
+	Approve(owner, spender string, amount math.Int) error
+	Mint(account string, amount math.Int)
 }
 
 // GRC20struct -> byte
 func StructToByte(data GRC20) []byte {
 	var result bytes.Buffer
 	enc := gob.NewEncoder(&result)
+
 	err := enc.Encode(data)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
+	fmt.Println(result)
+	fmt.Println(result.Bytes())
 	return result.Bytes()
 }
 

@@ -53,6 +53,5 @@ func SaveToken(name string, token Interface.GRC20) {
 
 func GetToken(tokenName string) (*token.Token, error) {
 	t, err := token.GetToken(tokenName)
-
 	return t, err
 }

@@ -1,16 +1,20 @@
 package token
 
-func NewToken(name, symbol string, dec uint8) *Token {
-	bm := make(map[string]uint64)
-	am := make(map[string]uint64)
+import (
+	"cosmossdk.io/math"
+)
 
-	t := &Token{
+func NewToken(name, symbol string, dec uint8) *Token {
+	bm := make(map[string]math.Int)
+	am := make(map[string]math.Int)
+
+	t := Token{
 		Name:        name,
 		Symbol:      symbol,
 		Decimal:     dec,
-		TotalSupply: 0,
+		TotalSupply: math.ZeroInt(),
 		Balance:     bm,
 		Allowances:  am,
 	}
-	return t
+	return &t
 }

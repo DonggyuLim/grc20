@@ -3,6 +3,7 @@ package rest
 import (
 	"fmt"
 
+	"cosmossdk.io/math"
 	"github.com/DonggyuLim/grc20/Interface"
 	"github.com/DonggyuLim/grc20/db"
 	"github.com/DonggyuLim/grc20/token"
@@ -13,14 +14,14 @@ import (
 type AccountResponse struct {
 	TokenName string `json:"tokenName"`
 	Account   string `json:"account"`
-	Balance   uint64 `json:"balance"`
-	Allowance uint64 `json:"Allowance"`
+	Balance   string `json:"balance"`
+	Allowance string `json:"Allowance"`
 }
 
 type deployRequest struct {
 	TokenName   string `json:"tokenName"`
 	Symbol      string `json:"symbol"`
-	TotalSupply uint64 `json:"totalSupply"`
+	TotalSupply string `json:"totalSupply"`
 	Decimal     uint8  `json:"decimal"`
 	Account     string `json:"account"`
 }
@@ -41,7 +42,8 @@ func Deploy(c *gin.Context) {
 		t := token.NewToken(r.TokenName, r.Symbol, r.Decimal)
 
 		// t.Mint(r.Account, r.TotalSupply)
-		t.Mint(r.Account, r.TotalSupply)
+		totalsupply, _ := math.NewIntFromString(r.TotalSupply)
+		t.Mint(r.Account, totalsupply)
 
 		Interface.SaveToken(r.TokenName, t)
 		c.JSON(200, gin.H{
@@ -57,7 +59,7 @@ func Deploy(c *gin.Context) {
 type mintRequest struct {
 	TokenName string `json:"tokenName"`
 	Account   string `json:"account"`
-	Amount    uint64 `json:"amount"`
+	Amount    string `json:"amount"`
 }
 
 func Mint(c *gin.Context) {
@@ -74,8 +76,8 @@ func Mint(c *gin.Context) {
 		c.String(400, err.Error())
 		return
 	}
-
-	t.Mint(r.Account, r.Amount)
+	amount, _ := math.NewIntFromString(r.Amount)
+	t.Mint(r.Account, amount)
 	u.SaveToken(r.TokenName, t)
 	c.JSON(200, gin.H{
 		"message":     "success",
@@ -83,7 +85,7 @@ func Mint(c *gin.Context) {
 		"account": AccountResponse{
 			TokenName: t.GetName(),
 			Account:   r.Account,
-			Balance:   t.BalanceOf(r.Account),
+			Balance:   t.BalanceOf(r.Account).String(),
 		},
 	})
 }
@@ -92,7 +94,7 @@ type trasferRequest struct {
 	TokenName string
 	To        string
 	From      string
-	Amount    uint64
+	Amount    string
 }
 
 func Transfer(c *gin.Context) {
@@ -108,7 +110,8 @@ func Transfer(c *gin.Context) {
 		c.String(400, err.Error())
 		return
 	}
-	err = t.Transfer(r.From, r.To, r.Amount)
+	amount, _ := math.NewIntFromString(r.Amount)
+	err = t.Transfer(r.From, r.To, amount)
 	if err != nil {
 		c.String(400, err.Error())
 		return
@@ -118,12 +121,12 @@ func Transfer(c *gin.Context) {
 		"from": AccountResponse{
 			TokenName: t.GetName(),
 			Account:   r.From,
-			Balance:   t.BalanceOf(r.From),
+			Balance:   t.BalanceOf(r.From).String(),
 		},
 		"to": AccountResponse{
 			TokenName: t.GetName(),
 			Account:   r.To,
-			Balance:   t.BalanceOf(r.To),
+			Balance:   t.BalanceOf(r.To).String(),
 		},
 		"balance": t.BalanceOf(r.From),
 	})
@@ -133,7 +136,7 @@ type approveRequest struct {
 	TokenName string `json:"tokenName"`
 	Owner     string `json:"owner"`
 	Spender   string `json:"spender"`
-	Amount    uint64 `json:"amount"`
+	Amount    string `json:"amount"`
 }
 
 func Approve(c *gin.Context) {
@@ -149,7 +152,8 @@ func Approve(c *gin.Context) {
 		c.String(400, err.Error())
 		return
 	}
-	err = t.Approve(r.Owner, r.Spender, r.Amount)
+	amount, _ := math.NewIntFromString(r.Amount)
+	err = t.Approve(r.Owner, r.Spender, amount)
 	if err != nil {
 		c.String(400, err.Error())
 		return
@@ -167,7 +171,7 @@ type transferFromRequest struct {
 
 	Spender string `json:"spender"`
 	To      string `json:"to"`
-	Amount  uint64 `json:"amount"`
+	Amount  string `json:"amount"`
 }
 
 func TransferFrom(c *gin.Context) {
@@ -182,7 +186,8 @@ func TransferFrom(c *gin.Context) {
 		c.String(400, err.Error())
 		return
 	}
-	err = t.TransferFrom(r.Onwer, r.Spender, r.To, r.Amount)
+	amount, _ := math.NewIntFromString(r.Amount)
+	err = t.TransferFrom(r.Onwer, r.Spender, r.To, amount)
 	if err != nil {
 		c.String(400, err.Error())
 		return
@@ -194,7 +199,7 @@ func TransferFrom(c *gin.Context) {
 		"to": AccountResponse{
 			TokenName: t.GetName(),
 			Account:   r.To,
-			Balance:   t.BalanceOf(r.To),
+			Balance:   t.BalanceOf(r.To).String(),
 		},
 	})
 }
@@ -202,7 +207,7 @@ func TransferFrom(c *gin.Context) {
 type burnRequest struct {
 	TokenName string `json:"tokenName"`
 	Account   string `json:"account"`
-	Amount    uint64 `json:"amount"`
+	Amount    string `json:"amount"`
 }
 
 func Burn(c *gin.Context) {
@@ -218,14 +223,15 @@ func Burn(c *gin.Context) {
 		c.String(400, err.Error())
 		return
 	}
-	t.Burn(r.Account, r.Amount)
+	amount, _ := math.NewIntFromString(r.Amount)
+	t.Burn(r.Account, amount)
 	u.SaveToken(r.TokenName, t)
 	c.JSON(200, gin.H{
 		"message":     success,
 		"totalSupply": t.GetTotalSupply(),
 		"account": AccountResponse{
 			Account: r.Account,
-			Balance: t.BalanceOf(r.Account),
+			Balance: t.BalanceOf(r.Account).String(),
 		},
 	})
 }

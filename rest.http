@@ -10,8 +10,8 @@ Content-Type: "application/json"
 {
     "tokenName":"USDT",
     "symbol":"USDT",
-    "totalSupply":1000,
-    "decimal":10,
+    "totalSupply":"100000",
+    "decimal":18,
     "account":"0xb"
 }
 
@@ -24,7 +24,7 @@ Content-Type: "application/json"
 {
     "tokenName":"USDT",
     "account":"0xc",
-    "amount":1000
+    "amount":"1000"
 }
 ### 
 POST http://localhost:8000/mint HTTP/1.1
@@ -33,7 +33,7 @@ Content-Type: "application/json"
 {
     "tokenName":"USDT",
     "account":"0xa",
-    "amount":1000
+    "amount":"1000"
 }
 //////////////////////////////////////////////////////////////
 //balance query
@@ -75,7 +75,7 @@ Content-Type: "application/json"
     "tokenName":"USDT",
     "from":"0xb",
     "to":"0xa",
-    "amount":10
+    "amount":"10"
 }
 /////////////////////////////////////////////////////////////////////
 ###
