@@ -9,13 +9,21 @@ import (
 	"github.com/DonggyuLim/grc20/token"
 	u "github.com/DonggyuLim/grc20/utils"
 	"github.com/gin-gonic/gin"
+	"github.com/shopspring/decimal"
 )
 
 type AccountResponse struct {
+<<<<<<< HEAD
 	TokenName string `json:"tokenName"`
 	Account   string `json:"account"`
 	Balance   string `json:"balance"`
 	Allowance string `json:"Allowance"`
+=======
+	TokenName string          `json:"tokenName"`
+	Account   string          `json:"account"`
+	Balance   decimal.Decimal `json:"balance"`
+	Allowance decimal.Decimal `json:"Allowance"`
+>>>>>>> parent of 3f9e7f6 (modified number Deciaml.Decimal -> uint64)
 }
 
 type deployRequest struct {
@@ -30,6 +38,7 @@ type deployRequest struct {
 func Deploy(c *gin.Context) {
 	r := deployRequest{}
 	err := c.ShouldBindJSON(&r)
+	fmt.Println("r==========", r)
 	if err != nil {
 		c.String(400, err.Error())
 	}
@@ -42,8 +51,12 @@ func Deploy(c *gin.Context) {
 		t := token.NewToken(r.TokenName, r.Symbol, r.Decimal)
 
 		// t.Mint(r.Account, r.TotalSupply)
+<<<<<<< HEAD
 		totalsupply, _ := math.NewIntFromString(r.TotalSupply)
 		t.Mint(r.Account, totalsupply)
+=======
+		t.Mint(r.Account, u.UintToDecimal(r.TotalSupply))
+>>>>>>> parent of 3f9e7f6 (modified number Deciaml.Decimal -> uint64)
 
 		Interface.SaveToken(r.TokenName, t)
 		c.JSON(200, gin.H{
@@ -76,8 +89,13 @@ func Mint(c *gin.Context) {
 		c.String(400, err.Error())
 		return
 	}
+<<<<<<< HEAD
 	amount, _ := math.NewIntFromString(r.Amount)
 	t.Mint(r.Account, amount)
+=======
+
+	t.Mint(r.Account, u.UintToDecimal(r.Amount))
+>>>>>>> parent of 3f9e7f6 (modified number Deciaml.Decimal -> uint64)
 	u.SaveToken(r.TokenName, t)
 	c.JSON(200, gin.H{
 		"message":     "success",
@@ -110,8 +128,12 @@ func Transfer(c *gin.Context) {
 		c.String(400, err.Error())
 		return
 	}
+<<<<<<< HEAD
 	amount, _ := math.NewIntFromString(r.Amount)
 	err = t.Transfer(r.From, r.To, amount)
+=======
+	err = t.Transfer(r.From, r.To, u.UintToDecimal(r.Amount))
+>>>>>>> parent of 3f9e7f6 (modified number Deciaml.Decimal -> uint64)
 	if err != nil {
 		c.String(400, err.Error())
 		return
@@ -186,8 +208,7 @@ func TransferFrom(c *gin.Context) {
 		c.String(400, err.Error())
 		return
 	}
-	amount, _ := math.NewIntFromString(r.Amount)
-	err = t.TransferFrom(r.Onwer, r.Spender, r.To, amount)
+	err = t.TransferFrom(r.Onwer, r.Spender, r.To, u.UintToDecimal(r.Amount))
 	if err != nil {
 		c.String(400, err.Error())
 		return
@@ -205,9 +226,15 @@ func TransferFrom(c *gin.Context) {
 }
 
 type burnRequest struct {
+<<<<<<< HEAD
 	TokenName string `json:"tokenName"`
 	Account   string `json:"account"`
 	Amount    string `json:"amount"`
+=======
+	TokenName string          `json:"tokenName"`
+	Account   string          `json:"account"`
+	Amount    decimal.Decimal `json:"amount"`
+>>>>>>> parent of 3f9e7f6 (modified number Deciaml.Decimal -> uint64)
 }
 
 func Burn(c *gin.Context) {
